@@ -74,10 +74,13 @@ export default class Profile extends LightningElement {
         getProfile({ accountId: this.currentPageReference.state.reff})
         .then(result => {
             // Handle success
-            console.log('Account 1st Record here', typeof result);
+            console.log('Account 1st Record here', result);
             var data= JSON.parse(result);
             console.log('Account Record here', data);
             this.phoneNumber = data.phoneNumber;
+            this.dateOfBirth = data.dateOfBirth;
+            this.tShirt = data.tShirtSize;
+            this.shoe = data.shoeSize;
             // Assign this result in the reactive elements
         })
     }

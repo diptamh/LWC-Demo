@@ -2,8 +2,8 @@ public without sharing class Profile {
     @AuraEnabled(cacheable=true)
     public static string getProfile(String accountId){
         try {
-            List<Account> accounts = [SELECT Phone FROM Account WHERE Id=: accountId LIMIT 1];
-            String parsed= new Profile.Parser(accounts[0]).returnString;
+            List<Account> accounts = [SELECT Phone,PersonBirthdate,Shoe_Size__c,TShirt_Size__c FROM Account WHERE Id=: accountId LIMIT 1];
+            String parsed= new Profile.Parser(accounts[0])?.returnString;
             return parsed;
         } catch (Exception e) {
             System.debug('Error');
@@ -39,7 +39,10 @@ public without sharing class Profile {
 
         public Parser(Account account){
             Profile.Parser instance = new Parser();
-            instance.phoneNumber = account.Phone;
+            instance.phoneNumber = account?.Phone;
+            instance.dateOfBirth = account?.PersonBirthdate;
+            instance.shoeSize = account?.Shoe_Size__c;
+            instance.tShirtSize = account?.TShirt_Size__c;
             returnString = (String) JSON.serialize(instance);
         }
     }
