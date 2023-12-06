@@ -1,0 +1,13 @@
+<template>
+    <lightning-input label="Phone Number" value={phoneNumber} onchange={handlePhoneNumberChange}></lightning-input>
+    <lightning-input label="Date of Birth" type="date" value={dateOfBirth}
+        onchange={handleDateOfBirthChange}></lightning-input>
+    <lightning-combobox name="Tshirt" label="Select an TShirt Size" value={tShirt} options={tShirtSize}
+        onchange={handleTShirtSizeChange}>
+    </lightning-combobox>
+    <lightning-combobox name="Shoe" label="Select Shoe Size" value={shoe} options={shoeSize}
+        onchange={handleShoeSizeChange}>
+    </lightning-combobox>
+    
+    <lightning-button label="Save" onclick={saveUserProfile}></lightning-button>
+</template>
