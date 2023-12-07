@@ -2,7 +2,16 @@ public without sharing class Profile {
     @AuraEnabled(cacheable=true)
     public static string getProfile(String accountId){
         try {
-            List<Account> accounts = [SELECT Phone,PersonBirthdate,Shoe_Size__c,TShirt_Size__c FROM Account WHERE Id=: accountId LIMIT 1];
+            List<Account> accounts = [  SELECT  Phone,
+                                                PersonBirthdate,
+                                                Shoe_Size__c,
+                                                TShirt_Size__c,
+                                                Masked_Id__c
+                                        FROM    Account 
+                                        WHERE   Masked_Id__c=: accountId 
+                                        AND     Profile_Completed__c = FALSE 
+                                        LIMIT 1 ];
+            System.debug('accounts-->'+accountId);
             String parsed= new Profile.Parser(accounts[0])?.returnString;
             return parsed;
         } catch (Exception e) {
@@ -15,7 +24,13 @@ public without sharing class Profile {
     public static string updateProfile(String data){
         try {
             Profile.Parser parsed= new Parser(data).returnParser;
-            
+            Account acc = new Account(  Masked_Id__c = parsed.accountId,
+                                        Phone = parsed.phoneNumber,
+                                        PersonBirthdate = parsed.dateOfBirth,
+                                        Shoe_Size__c = parsed.shoeSize,
+                                        TShirt_Size__c = parsed.tShirtSize);
+            Database.upsert(acc);
+            CommutatusIntegration.setData(parsed.accountId);
             return 'ac';
         } catch (Exception e) {
             System.debug('Error');
@@ -28,6 +43,7 @@ public without sharing class Profile {
         public Date dateOfBirth;
         public String tShirtSize;
         public String shoeSize;
+        public String accountId;
 
         Parser returnParser;
         String returnString;

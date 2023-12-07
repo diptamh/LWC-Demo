@@ -1,7 +1,3 @@
-// import { LightningElement } from 'lwc';
-
-// export default class Profile extends LightningElement {}
-
 import { LightningElement, track, wire } from 'lwc';
 import updateProfile from'@salesforce/apex/Profile.updateProfile';
 import getProfile from '@salesforce/apex/Profile.getProfile';
@@ -69,19 +65,16 @@ export default class Profile extends LightningElement {
     }
 
     
-
-    connectedCallback() {      
+    connectedCallback() {    
+        console.log('reff',this.currentPageReference.state.reff);  
         getProfile({ accountId: this.currentPageReference.state.reff})
         .then(result => {
-            // Handle success
-            console.log('Account 1st Record here', result);
+            
             var data= JSON.parse(result);
-            console.log('Account Record here', data);
             this.phoneNumber = data.phoneNumber;
             this.dateOfBirth = data.dateOfBirth;
             this.tShirt = data.tShirtSize;
             this.shoe = data.shoeSize;
-            // Assign this result in the reactive elements
         })
     }
 
@@ -93,6 +86,7 @@ export default class Profile extends LightningElement {
             dateOfBirth : this.dateOfBirth,
             tShirtSize : this.tShirt,
             shoeSize: this.shoe,
+            accountId: this.currentPageReference.state.reff,
         };
         updateProfile({ data: JSON.stringify(data)})
             .then(result => {
