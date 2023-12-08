@@ -1,3 +1,7 @@
+/**
+ * @Description: HTTPCallount class to help in facilitate https call out.
+ * @Feature: Written in builder pattern to add best practice.
+ */
 public with sharing class HTTPCallout {
     Http h;
     HttpRequest req;

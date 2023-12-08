@@ -7,6 +7,8 @@ export default class Profile extends LightningElement {
     @track dateOfBirth;
     @track tShirt;
     @track shoe;
+    @track message = '';
+    @track messageClass = ''; 
 
     @wire(CurrentPageReference)
     currentPageReference;
@@ -69,18 +71,25 @@ export default class Profile extends LightningElement {
         console.log('reff',this.currentPageReference.state.reff);  
         getProfile({ accountId: this.currentPageReference.state.reff})
         .then(result => {
-            
             var data= JSON.parse(result);
             this.phoneNumber = data.phoneNumber;
             this.dateOfBirth = data.dateOfBirth;
             this.tShirt = data.tShirtSize;
             this.shoe = data.shoeSize;
-        })
+        }).catch(error => {
+            // Handle error
+            this.message = saveSuccessful ? 'Something went wrong.' : 'Something went wrong.';
+            this.messageClass = saveSuccessful ? 'success' : 'error';
+            console.error('Error saving user profile:', error);
+        });
     }
 
     
     saveUserProfile() {
         // Call the Apex method to save user profile data
+        const saveSuccessful = true;
+
+        // Update message and class based on save result
         const data = {
             phoneNumber : this.phoneNumber,
             dateOfBirth : this.dateOfBirth,
@@ -91,10 +100,14 @@ export default class Profile extends LightningElement {
         updateProfile({ data: JSON.stringify(data)})
             .then(result => {
                 // Handle success
-                console.log('User profile saved successfully:', result);
+                this.message = saveSuccessful ? 'Data saved successfully.' : result;
+                this.messageClass = saveSuccessful ? 'success' : 'error';
+                console.log('User profile saved successfully:', 'Record already updated');
             })
             .catch(error => {
                 // Handle error
+                this.message = saveSuccessful ? 'Something went wrong.' : 'Something went wrong.';
+                this.messageClass = saveSuccessful ? 'success' : 'error';
                 console.error('Error saving user profile:', error);
             });
     }
