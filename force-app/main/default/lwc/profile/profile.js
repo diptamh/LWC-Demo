@@ -1,7 +1,3 @@
-// import { LightningElement } from 'lwc';
-
-// export default class Profile extends LightningElement {}
-
 import { LightningElement, track, wire } from 'lwc';
 import updateProfile from'@salesforce/apex/Profile.updateProfile';
 import getProfile from '@salesforce/apex/Profile.getProfile';
@@ -11,6 +7,8 @@ export default class Profile extends LightningElement {
     @track dateOfBirth;
     @track tShirt;
     @track shoe;
+    @track message = '';
+    @track messageClass = ''; 
 
     @wire(CurrentPageReference)
     currentPageReference;
@@ -69,35 +67,47 @@ export default class Profile extends LightningElement {
     }
 
     
-
-    connectedCallback() {      
+    connectedCallback() {    
+        console.log('reff',this.currentPageReference.state.reff);  
         getProfile({ accountId: this.currentPageReference.state.reff})
         .then(result => {
-            // Handle success
-            console.log('Account 1st Record here', typeof result);
             var data= JSON.parse(result);
-            console.log('Account Record here', data);
             this.phoneNumber = data.phoneNumber;
-            // Assign this result in the reactive elements
-        })
+            this.dateOfBirth = data.dateOfBirth;
+            this.tShirt = data.tShirtSize;
+            this.shoe = data.shoeSize;
+        }).catch(error => {
+            // Handle error
+            this.message = saveSuccessful ? 'Something went wrong.' : 'Something went wrong.';
+            this.messageClass = saveSuccessful ? 'success' : 'error';
+            console.error('Error saving user profile:', error);
+        });
     }
 
     
     saveUserProfile() {
         // Call the Apex method to save user profile data
+        const saveSuccessful = true;
+
+        // Update message and class based on save result
         const data = {
             phoneNumber : this.phoneNumber,
             dateOfBirth : this.dateOfBirth,
             tShirtSize : this.tShirt,
             shoeSize: this.shoe,
+            accountId: this.currentPageReference.state.reff,
         };
         updateProfile({ data: JSON.stringify(data)})
             .then(result => {
                 // Handle success
-                console.log('User profile saved successfully:', result);
+                this.message = saveSuccessful ? 'Data saved successfully.' : result;
+                this.messageClass = saveSuccessful ? 'success' : 'error';
+                console.log('User profile saved successfully:', 'Record already updated');
             })
             .catch(error => {
                 // Handle error
+                this.message = saveSuccessful ? 'Something went wrong.' : 'Something went wrong.';
+                this.messageClass = saveSuccessful ? 'success' : 'error';
                 console.error('Error saving user profile:', error);
             });
     }
