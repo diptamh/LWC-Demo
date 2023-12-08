@@ -29,7 +29,7 @@ public with sharing class CommutatusIntegration {
                                 .send();
 
         if(http.getStatus() == '200'){
-            upsert new Account(Id = accountMap.get('accId'),Description= ((Map<String,String>)JSON.deserialize(http.getBody(), Map<String,String>.class)).get('customer_id'));
+            upsert new Account(Mask_ID__c = accountMap.get('accId'),Description= ((Map<String,String>)JSON.deserialize(http.getBody(), Map<String,String>.class)).get('customer_id'));
         }
     }
 

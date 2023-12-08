@@ -19,7 +19,9 @@ public without sharing class Profile {
                                         AND     Profile_Completed__c = FALSE 
                                         LIMIT 1 ];
             System.debug('accounts-->'+accountId);
-            String parsed= new Profile.Parser(accounts[0])?.returnString;
+            String parsed;
+            if(!accounts.isEmpty())
+                parsed= new Profile.Parser(accounts[0])?.returnString;
             return parsed;
         } catch (Exception e) {
             System.debug('Error');
@@ -46,6 +48,8 @@ public without sharing class Profile {
                                         WHERE   Mask_ID__c =: parsed != null ? parsed.accountId : null
                                         AND     Profile_Completed__c = FALSE];
 
+            if(accounts.isEmpty()) return 'Profile not found';
+            
             accounts[0].Profile_Completed__c = true;
             accounts[0].Phone = parsed?.phoneNumber;
             accounts[0].Date_Of_Birth__c = parsed?.dateOfBirth;
